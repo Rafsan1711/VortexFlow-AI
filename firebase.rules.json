@@ -1,0 +1,34 @@
+{
+  "rules": {
+    "chats": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "messages": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "feedback": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "systemStatus": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "statusMetrics": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "health_check": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}

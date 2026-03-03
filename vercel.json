@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/vercel-status",
+      "destination": "https://www.vercel-status.com/api/v2/status.json"
+    },
+    {
+      "source": "/api/firebase-status",
+      "destination": "https://status.firebase.google.com/incidents.json"
+    },
+    {
+      "source": "/api/gcloud-status",
+      "destination": "https://status.cloud.google.com/incidents.json"
+    }
+  ]
+}
