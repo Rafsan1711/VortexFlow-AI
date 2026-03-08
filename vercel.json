@@ -3,8 +3,8 @@
   "outputDirectory": "dist",
   "routes": [
     {
-      "src": "/sitemap.xml",
-      "dest": "/sitemap.xml",
+      "src": "/sitemap_index.xml",
+      "dest": "/sitemap_index.xml",
       "headers": {
         "Content-Type": "application/xml; charset=utf-8",
         "Cache-Control": "public, max-age=86400"
