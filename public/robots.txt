@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vortexflow-ai.vercel.app/sitemap.xml
+
+Sitemap: https://vortexflow-ai.vercel.app/sitemap_index.xml
