@@ -1,37 +1,40 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "headers": [
+  "routes": [
     {
-      "source": "/sitemap.xml",
-      "headers": [
-        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml",
+      "headers": {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, max-age=86400"
+      }
     },
     {
-      "source": "/robots.txt",
-      "headers": [
-        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
-      ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/vercel-status",
-      "destination": "https://www.vercel-status.com/api/v2/status.json"
+      "src": "/robots.txt",
+      "dest": "/robots.txt",
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8"
+      }
     },
     {
-      "source": "/api/firebase-status",
-      "destination": "https://status.firebase.google.com/incidents.json"
+      "src": "/api/vercel-status",
+      "dest": "https://www.vercel-status.com/api/v2/status.json"
     },
     {
-      "source": "/api/gcloud-status",
-      "destination": "https://status.cloud.google.com/incidents.json"
+      "src": "/api/firebase-status",
+      "dest": "https://status.firebase.google.com/incidents.json"
     },
     {
-      "source": "/((?!sitemap\\.xml|robots\\.txt|.*\\.[^/]+$).*)",
-      "destination": "/index.html"
+      "src": "/api/gcloud-status",
+      "dest": "https://status.cloud.google.com/incidents.json"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
