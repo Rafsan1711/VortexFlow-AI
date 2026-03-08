@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/vercel-status",
@@ -11,6 +13,10 @@
     {
       "source": "/api/gcloud-status",
       "destination": "https://status.cloud.google.com/incidents.json"
+    },
+    {
+      "source": "/((?!sitemap\\.xml|robots\\.txt|.*\\.[^/]+$).*)",
+      "destination": "/index.html"
     }
   ]
 }
