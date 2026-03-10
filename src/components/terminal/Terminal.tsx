@@ -4,7 +4,6 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useAppStore } from '../../store/useAppStore';
 import { PLUGINS } from '../../lib/plugins';
 import IframePlugin from './IframePlugin';
-import { generateCowsay, ASCII_ANIMATIONS } from '../../lib/asciiAnimations';
 
 const Terminal = () => {
   const { 
@@ -25,11 +24,6 @@ const Terminal = () => {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [loadingPlugin, setLoadingPlugin] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  
-  // Animation state
-  const [activeAnim, setActiveAnim] = useState<string | null>(null);
-  const [animFrame, setAnimFrame] = useState(0);
-
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -68,39 +62,14 @@ const Terminal = () => {
   // Auto-scroll
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [terminalLines, activeAnim, animFrame]);
+  }, [terminalLines]);
 
   // Keep focus on input
   useEffect(() => {
-    if (!activePlugin && !activeAnim) {
+    if (!activePlugin) {
       inputRef.current?.focus();
     }
-  }, [activePlugin, activeAnim]);
-
-  // Handle ASCII Animations
-  useEffect(() => {
-    if (!activeAnim) return;
-    const frames = ASCII_ANIMATIONS[activeAnim];
-    if (!frames) return;
-
-    let frameIdx = 0;
-    let loops = 0;
-    const maxLoops = activeAnim === 'loading' ? 3 : 10; // Shorter for loading
-
-    const interval = setInterval(() => {
-      frameIdx = (frameIdx + 1) % frames.length;
-      setAnimFrame(frameIdx);
-      if (frameIdx === 0) loops++;
-      
-      if (loops >= maxLoops) {
-        clearInterval(interval);
-        setActiveAnim(null);
-        addTerminalLine({ type: 'system', content: `> Animation '${activeAnim}' finished.` });
-      }
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, [activeAnim, addTerminalLine]);
+  }, [activePlugin]);
 
   const handleCommand = (cmd: string) => {
     const trimmed = cmd.trim();
@@ -115,18 +84,6 @@ const Terminal = () => {
 
     const args = trimmed.split(' ');
     const baseCmd = args[0].toLowerCase();
-
-    // Check for ASCII animation command ($%name%)
-    if (trimmed.startsWith('$%') && trimmed.endsWith('%')) {
-      const animName = trimmed.slice(2, -1).toLowerCase();
-      if (ASCII_ANIMATIONS[animName]) {
-        setActiveAnim(animName);
-        setAnimFrame(0);
-      } else {
-        addTerminalLine({ type: 'error', content: `Animation '${animName}' not found. Try: $%dance%, $%nyan%, $%wave%, $%loading%, $%helicopter%` });
-      }
-      return;
-    }
 
     // Check for plugin commands
     const plugin = PLUGINS.find(p => p.command === baseCmd);
@@ -147,8 +104,6 @@ const Terminal = () => {
         addTerminalLine({ type: 'output', content: '  whoami        - Print logged-in user info' });
         addTerminalLine({ type: 'output', content: '  date          - Print current date/time' });
         addTerminalLine({ type: 'output', content: '  echo <text>   - Print back the text' });
-        addTerminalLine({ type: 'output', content: '  cowsay <text> - A talking cow says your text' });
-        addTerminalLine({ type: 'output', content: '  $%name%       - Play ASCII animation (e.g. $%dance%, $%nyan%)' });
         addTerminalLine({ type: 'output', content: '  history       - Show last 20 typed commands' });
         break;
       case 'clear':
@@ -171,10 +126,6 @@ const Terminal = () => {
         break;
       case 'echo':
         addTerminalLine({ type: 'output', content: args.slice(1).join(' ') });
-        break;
-      case 'cowsay':
-        const text = args.slice(1).join(' ') || 'Moo!';
-        addTerminalLine({ type: 'output', content: generateCowsay(text) });
         break;
       case 'history':
         const histToShow = commandHistory.slice(0, 20).reverse();
@@ -318,12 +269,6 @@ const Terminal = () => {
             {`> Loading plugin... [${'█'.repeat(Math.floor(loadingProgress / 10))}${'░'.repeat(10 - Math.floor(loadingProgress / 10))}] ${loadingProgress}%`}
           </div>
         )}
-
-        {activeAnim && ASCII_ANIMATIONS[activeAnim] && (
-          <div className="text-[#00E5A0] whitespace-pre-wrap mb-1">
-            {ASCII_ANIMATIONS[activeAnim][animFrame]}
-          </div>
-        )}
         
         <div ref={endRef} />
       </div>
@@ -338,8 +283,7 @@ const Terminal = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={!!activeAnim}
-            className="w-full bg-transparent text-[#F0F0FF] outline-none border-none font-mono disabled:opacity-50"
+            className="w-full bg-transparent text-[#F0F0FF] outline-none border-none font-mono"
             autoFocus
             spellCheck={false}
             autoComplete="off"
